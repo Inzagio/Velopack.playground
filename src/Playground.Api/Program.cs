@@ -1,3 +1,21 @@
+
+using Velopack;
+
+VelopackApp.Build().Run();
+
+var mgr = new UpdateManager("D:\\VeloUpdates");
+
+// check for new version
+var newVersion = await mgr.CheckForUpdatesAsync();
+if (newVersion == null)
+    return; // no update available
+
+// download new version
+await mgr.DownloadUpdatesAsync(newVersion);
+
+// install new version and restart app
+mgr.ApplyUpdatesAndRestart(newVersion);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

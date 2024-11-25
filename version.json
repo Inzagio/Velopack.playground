@@ -1,0 +1,38 @@
+{
+    "version": "1.0-prerelease", 
+    "assemblyVersion": {
+      "version": "1.0",
+      "precision": "revision" 
+    },
+    "semVer1NumericIdentifierPadding": 4,
+    "gitCommitIdShortFixedLength": 10,
+    "gitCommitIdShortAutoMinimum": 0, 
+    "nugetPackageVersion": {
+       "semVer": 1 ,
+       "precision": "build" 
+    },
+    "pathFilters": [
+      
+    ],
+    "publicReleaseRefSpec": [
+      "^refs/heads/master$",
+      "^refs/tags/v\\d+\\.\\d+" 
+    ],
+    "cloudBuild": {
+      "setVersionVariables": true,
+      "buildNumber": {
+        "enabled": false,
+        "includeCommitId": {
+          "when": "nonPublicReleaseOnly",
+          "where": "buildMetadata"
+        }
+      }
+    },
+    "release" : {
+      "tagName" : "v{version}",
+      "branchName" : "v{version}",
+      "versionIncrement" : "minor",
+      "firstUnstableTag" : "alpha"
+    },
+    "inherit": false
+  }

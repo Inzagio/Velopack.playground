@@ -27,7 +27,8 @@
         "Clean",
         "Compile",
         "Publish",
-        "Restore"
+        "Restore",
+        "Velopack"
       ]
     },
     "Verbosity": {

@@ -1,4 +1,5 @@
-﻿using Velopack;
+﻿using System.Threading.Tasks;
+using Velopack;
 
 namespace Playground.Api.Deployment;
 

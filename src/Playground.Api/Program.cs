@@ -1,21 +1,12 @@
-
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Velopack;
 
 VelopackApp.Build().Run();
-
-var mgr = new UpdateManager("D:\\VeloUpdates");
-
-// check for new version
-var newVersion = await mgr.CheckForUpdatesAsync();
-if (newVersion == null)
-    return; // no update available
-
-// download new version
-await mgr.DownloadUpdatesAsync(newVersion);
-
-// install new version and restart app
-mgr.ApplyUpdatesAndRestart(newVersion);
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -50,10 +41,29 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
-
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+public partial class Program
+{
+    private static async Task UpdateMyApp()
+    {
+        var mgr = new UpdateManager("D:\\VeloUpdates");
+
+        // check for new version
+        var newVersion = await mgr.CheckForUpdatesAsync();
+        if (newVersion == null)
+            return; // no update available
+
+        // download new version
+        await mgr.DownloadUpdatesAsync(newVersion);
+
+        // install new version and restart app
+        mgr.ApplyUpdatesAndRestart(newVersion);
+    }    
+}
+

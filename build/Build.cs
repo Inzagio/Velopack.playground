@@ -1,5 +1,9 @@
 using System;
 using System.Linq;
+
+using CliWrap;
+using CliWrap.Buffered;
+
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
@@ -38,13 +42,18 @@ class Build : NukeBuild
     readonly NerdbankGitVersioning NerdbankVersioning;
     AbsolutePath PublishDirectory => RootDirectory / "Publish";
     AbsolutePath ApiSourceDirectory => RootDirectory / "src" / "Playground.Api";
+    AbsolutePath ReleaseDirectory => RootDirectory / "Releases";
     
+    
+    const string AppId = "Velopack.Playground";
+    const string Exe = "Playground.Api.exe";
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
         {
-            // Log.Information("NerdbankVersioning = {Value}", NerdbankVersioning.SimpleVersion);
+            Log.Information("NerdbankVersioning = {Value}", NerdbankVersioning.SimpleVersion);
             PublishDirectory.DeleteDirectory();
+            ReleaseDirectory.DeleteDirectory();
             DotNetTasks.DotNetClean(s => s
                 .SetProject(Solution)
                 .SetConfiguration(Configuration));
@@ -83,6 +92,23 @@ class Build : NukeBuild
                 .SetVerbosity(DotNetVerbosity.normal)
                 .SetFramework("net9.0")
                 .SetRuntime("win-x64")
+                .SetVersion(NerdbankVersioning.Version)
+                .SetAssemblyVersion(NerdbankVersioning.AssemblyVersion)
+                .SetFileVersion(NerdbankVersioning.SimpleVersion)
                 .EnableNoRestore());
         }));
+    
+    Target Velopack => _ => _
+        .DependsOn(Publish)
+        .After(Publish)
+        .Executes(async () =>
+        {
+            Log.Information("Packing with Velopack");
+            
+            var result = await Cli.Wrap("vpk")
+                .WithArguments($"pack --packId {AppId} --packVersion {NerdbankVersioning.SimpleVersion} --packDir {PublishDirectory}  --mainExe {Exe}")
+                .WithValidation(CommandResultValidation.ZeroExitCode)
+                .ExecuteBufferedAsync();
+            Log.Information($"Velopack Output: {result.StandardOutput}");
+        });
 }

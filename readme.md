@@ -2,7 +2,7 @@
 # What is this thing even?
 For a company, I did some initial experimentation on how to deploy internal development tools in an easy manner.
 This sample application takes the standard Weatherforecast API and packs it using Velopack. Think of Velopack like Squirrel.Windows and Click-Once (that actually works).  
-This is something is super great to deploy many types of applications, including bogstandard CLI applications. 
+This is super great for deploying many types of applications, including bogstandard CLI applications. 
 
 # What tools are used to do this
 - [Velopack](https://velopack.io)
